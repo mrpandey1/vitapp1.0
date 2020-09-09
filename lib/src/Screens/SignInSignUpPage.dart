@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:vitapp/src/Screens/HomeScreen.dart';
 import 'AddNotices.dart';
 import 'package:vitapp/src/Widgets/SnackBar.dart';
 import 'package:vitapp/src/Widgets/header.dart';
@@ -60,7 +61,7 @@ class _SignInSignUpPageState extends State<SignInSignUpPage> {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => AddNotice(),
+                builder: (context) => HomeScreen(),
               ));
         }).catchError((e) {
           _scaffoldKey.currentState.showSnackBar(snackBar(context,
