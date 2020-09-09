@@ -1,5 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vitapp/Widgets/Animation.dart';
 import 'package:vitapp/constants.dart';
+import 'package:vitapp/main.dart';
+
+void _signOut(context) async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(context, BouncyPageRoute(widget: MyApp()));
+  } catch (e) {
+    print(e);
+  }
+}
 
 header(
   context, {
@@ -19,5 +31,16 @@ header(
             fontWeight: bold ? FontWeight.bold : FontWeight.normal),
       ),
       backgroundColor: kPrimaryColor,
+      actions: isLogout
+          ? <Widget>[
+              FlatButton(
+                child: Text(
+                  'Sign out',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () => _signOut(context),
+              )
+            ]
+          : null,
       centerTitle: isCenterTitle);
 }

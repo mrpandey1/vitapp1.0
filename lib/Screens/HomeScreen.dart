@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:vitapp/Screens/AddNotices.dart';
 import 'package:vitapp/Screens/TimeLine.dart';
+import 'package:vitapp/Screens/authenticator.dart';
 import 'package:vitapp/Widgets/Animation.dart';
 import 'package:vitapp/Widgets/header.dart';
 import 'package:vitapp/constants.dart';
@@ -36,7 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text('Add Notice'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(context, BouncyPageRoute(widget: AddNotice()));
+                  Navigator.push(
+                      context, BouncyPageRoute(widget: Authenticator()));
                 }),
           ],
         ),

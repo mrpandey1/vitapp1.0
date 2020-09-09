@@ -37,6 +37,7 @@ class _AddNoticeState extends State<AddNotice> {
         titleText: 'Add Notice',
         isCenterTitle: true,
         bold: true,
+        isLogout: true,
       ),
       body: _loading
           ? CircularProgressIndicator()
