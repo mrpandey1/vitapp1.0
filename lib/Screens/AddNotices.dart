@@ -298,6 +298,18 @@ class _AddNoticeState extends State<AddNotice> {
           isErrorSnackbar: false,
           successText: 'Notice sent Successfully',
         ));
+      });
+      await timelineRef
+          .doc('all')
+          .collection('timelinePost')
+          .doc(postId)
+          .set(data)
+          .then((value) {
+        _scaffoldKey.currentState.showSnackBar(snackBar(
+          context,
+          isErrorSnackbar: false,
+          successText: 'Notice sent Successfully',
+        ));
         Timer timer = new Timer.periodic(new Duration(seconds: 2), (time) {
           Navigator.pop(context);
           time.cancel();

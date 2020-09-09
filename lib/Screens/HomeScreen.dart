@@ -8,6 +8,7 @@ import 'package:vitapp/Widgets/header.dart';
 import 'package:vitapp/constants.dart';
 
 final postRef = FirebaseFirestore.instance.collection('posts');
+final timelineRef = FirebaseFirestore.instance.collection('timeline');
 final StorageReference storageRef = FirebaseStorage.instance.ref();
 
 class HomeScreen extends StatefulWidget {
