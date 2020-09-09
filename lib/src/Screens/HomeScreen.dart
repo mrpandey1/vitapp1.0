@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:vitapp/src/Screens/AddNotes.dart';
 import 'package:vitapp/src/Screens/AddNotices.dart';
 import 'TimeLine.dart';
 import 'Authenticator.dart';
@@ -12,6 +13,8 @@ import 'package:vitapp/src/constants.dart';
 final postRef = FirebaseFirestore.instance.collection('posts');
 final timelineRef = FirebaseFirestore.instance.collection('timeline');
 final StorageReference storageRef = FirebaseStorage.instance.ref();
+final notesRef = FirebaseFirestore.instance.collection('notes');
+final subjectsRef = FirebaseFirestore.instance.collection('subjects');
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -83,11 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 }),
         Divider(),
-        getTile(Icons.library_books, 'Notes',
+        getTile(Icons.library_books, 'Add Notes',
             function: () => {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddNotice()),
+                    MaterialPageRoute(builder: (context) => AddNotes()),
                   )
                 }),
         Divider(),
