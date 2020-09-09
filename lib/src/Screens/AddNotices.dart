@@ -287,18 +287,6 @@ class _AddNoticeState extends State<AddNotice> {
         'notice': notice,
         'timestamp': DateTime.now()
       };
-      await postRef
-          .doc(from)
-          .collection(postId)
-          .doc(DateTime.now().toString())
-          .set(data)
-          .then((value) {
-        _scaffoldKey.currentState.showSnackBar(snackBar(
-          context,
-          isErrorSnackbar: false,
-          successText: 'Notice sent Successfully',
-        ));
-      });
       await timelineRef
           .doc('all')
           .collection('timelinePost')
