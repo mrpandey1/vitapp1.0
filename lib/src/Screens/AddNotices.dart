@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:vitapp/Screens/HomeScreen.dart';
-import 'package:vitapp/Widgets/SnackBar.dart';
-import 'package:vitapp/Widgets/header.dart';
+import 'HomeScreen.dart';
+import 'package:vitapp/src/Widgets/SnackBar.dart';
+import 'package:vitapp/src//Widgets/header.dart';
 import 'package:image/image.dart' as im;
 import '../constants.dart';
 
@@ -311,7 +310,7 @@ class _AddNoticeState extends State<AddNotice> {
           isErrorSnackbar: false,
           successText: 'Notice sent Successfully',
         ));
-        Timer timer = new Timer.periodic(new Duration(seconds: 2), (time) {
+        Timer.periodic(new Duration(seconds: 2), (time) {
           Navigator.pop(context);
           time.cancel();
         });

@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:vitapp/Screens/AddNotices.dart';
-import 'package:vitapp/Screens/signinsignuppage.dart';
+import 'package:vitapp/src/Screens/HomeScreen.dart';
+import 'AddNotices.dart';
+import 'SignInSignUpPage.dart';
 
 class Authenticator extends StatefulWidget {
   @override
@@ -37,6 +38,6 @@ class _AuthenticatorState extends State<Authenticator> {
 
   void pushToHomePage() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => AddNotice()));
+        context, MaterialPageRoute(builder: (context) => HomeScreen()));
   }
 }
