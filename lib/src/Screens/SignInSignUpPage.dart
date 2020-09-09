@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:vitapp/Screens/AddNotices.dart';
-import 'package:vitapp/Widgets/SnackBar.dart';
-import 'package:vitapp/Widgets/header.dart';
-import 'package:vitapp/constants.dart';
+import 'AddNotices.dart';
+import 'package:vitapp/src/Widgets/SnackBar.dart';
+import 'package:vitapp/src/Widgets/header.dart';
+import 'package:vitapp/src/constants.dart';
 
 enum STATE { SIGNIN, SIGNUP, RESET }
 

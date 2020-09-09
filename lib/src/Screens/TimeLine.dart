@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:vitapp/Widgets/NoticeItem.dart';
+import 'package:vitapp/src/Widgets/NoticeItem.dart';
 import 'HomeScreen.dart';
-
-List<DocumentSnapshot> _list;
 
 class TimeLine extends StatefulWidget {
   @override
@@ -39,7 +37,6 @@ class _TimeLineState extends State<TimeLine> {
                 });
           }
           _list = snapshots.data.docs;
-          print(_list.length);
           return _list.length == 0
               ? Center(
                   child: Text('No Notice For Now!'),

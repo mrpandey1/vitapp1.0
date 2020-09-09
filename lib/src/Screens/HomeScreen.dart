@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:vitapp/Screens/AddNotices.dart';
-import 'package:vitapp/Screens/TimeLine.dart';
-import 'package:vitapp/Screens/authenticator.dart';
-import 'package:vitapp/Widgets/Animation.dart';
-import 'package:vitapp/Widgets/header.dart';
-import 'package:vitapp/constants.dart';
+import 'TimeLine.dart';
+import 'Authenticator.dart';
+import 'package:vitapp/src//Widgets/Animation.dart';
+import 'package:vitapp/src//Widgets/header.dart';
+import 'package:vitapp/src/constants.dart';
 
 final postRef = FirebaseFirestore.instance.collection('posts');
 final timelineRef = FirebaseFirestore.instance.collection('timeline');
