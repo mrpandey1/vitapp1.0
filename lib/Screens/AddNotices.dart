@@ -1,8 +1,13 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vitapp/Screens/HomeScreen.dart';
+import 'package:vitapp/Widgets/SnackBar.dart';
 import 'package:vitapp/Widgets/header.dart';
 import 'package:image/image.dart' as im;
 import '../constants.dart';
@@ -17,13 +22,15 @@ class _AddNoticeState extends State<AddNotice> {
   TextEditingController _fromController = TextEditingController();
   bool noticeError = false;
   bool fromError = false;
-
+  bool _loading = false;
   File file;
   String postId = Uuid().v4();
-
+  String ownerId = Uuid().v4();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: header(
         context,
         isAppTitle: false,
@@ -31,112 +38,115 @@ class _AddNoticeState extends State<AddNotice> {
         isCenterTitle: true,
         bold: true,
       ),
-      body: ListView(
-        children: [
-          Center(
-            child: Column(
+      body: _loading
+          ? CircularProgressIndicator()
+          : ListView(
               children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
-                  child: TextFormField(
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    controller: _noticeController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Add Notice Here....',
-                      labelText: 'Notice',
-                      errorText: noticeError ? 'Notice is empty' : null,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30.0),
-                GestureDetector(
-                  onTap: () => {selectImage(context)},
-                  child: Container(
-                    height: 200.0,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Center(
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
+                Center(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: TextFormField(
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          controller: _noticeController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Add Notice Here....',
+                            labelText: 'Notice',
+                            errorText: noticeError ? 'Notice is empty' : null,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 30.0),
+                      GestureDetector(
+                        onTap: () => {selectImage(context)},
                         child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            image: file != null
-                                ? DecorationImage(image: FileImage(file))
-                                : DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/upload.jpg')),
+                          height: 200.0,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Center(
+                            child: AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  image: file != null
+                                      ? DecorationImage(image: FileImage(file))
+                                      : DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/upload.jpg')),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.only(left: 30.0),
-                  child: Text(
-                    'Adding Image is Optional',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 40.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20.0, right: 20.0, bottom: 10.0),
-                  child: TextFormField(
-                    maxLines: 1,
-                    controller: _fromController,
-                    decoration: InputDecoration(
-                      hintText: 'ex. David Assistant Professor',
-                      labelText: 'From:',
-                      errorText: fromError ? 'This field is required' : null,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
-                Container(
-                  height: 50.0,
-                  width: 350.0,
-                  child: Material(
-                    borderRadius: BorderRadius.circular(5.0),
-                    elevation: 2.0,
-                    color: kPrimaryColor,
-                    child: InkWell(
-                      onTap: onSubmit,
-                      child: Center(
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only(left: 30.0),
                         child: Text(
-                          'Confirm',
+                          'Adding Image is Optional',
                           style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
+                            fontSize: 12.0,
+                            color: kPrimaryColor,
                           ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 40.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20.0, right: 20.0, bottom: 10.0),
+                        child: TextFormField(
+                          maxLines: 1,
+                          controller: _fromController,
+                          decoration: InputDecoration(
+                            hintText: 'ex. David Assistant Professor',
+                            labelText: 'From:',
+                            errorText:
+                                fromError ? 'This field is required' : null,
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25.0,
+                      ),
+                      Container(
+                        height: 50.0,
+                        width: 350.0,
+                        child: Material(
+                          borderRadius: BorderRadius.circular(5.0),
+                          elevation: 2.0,
+                          color: kPrimaryColor,
+                          child: InkWell(
+                            onTap: onSubmit,
+                            child: Center(
+                              child: Text(
+                                'Confirm',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  height: 15.0,
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -251,15 +261,54 @@ class _AddNoticeState extends State<AddNotice> {
       if (file != null) {
         await compressImage();
       }
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SelectSendNoticeOptions(
-                    noticeText: notice,
-                    fromText: from,
-                    file: file,
-                  )));
+      sendNotice(notice, from, file);
     }
+  }
+
+  Future<String> uploadImage(imageFile) async {
+    StorageUploadTask uploadTask =
+        storageRef.child('posts').child('post_$postId.jpg').putFile(imageFile);
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+  Future<void> sendNotice(notice, from, file) async {
+    try {
+      String mediaUrl = '';
+      if (file != null) {
+        mediaUrl = await uploadImage(file);
+      }
+
+      Map<String, dynamic> data = {
+        'postId': postId,
+        'from': from,
+        'mediaUrl': mediaUrl,
+        'notice': notice,
+        'timestamp': DateTime.now()
+      };
+      await postRef
+          .doc(from)
+          .collection(postId)
+          .doc(DateTime.now().toString())
+          .set(data)
+          .then((value) {
+        _scaffoldKey.currentState.showSnackBar(snackBar(
+          context,
+          isErrorSnackbar: false,
+          successText: 'Notice sent Successfully',
+        ));
+        Timer timer = new Timer.periodic(new Duration(seconds: 2), (time) {
+          Navigator.pop(context);
+          time.cancel();
+        });
+      });
+    } catch (e) {
+      _scaffoldKey.currentState.showSnackBar(snackBar(context,
+          isErrorSnackbar: true, errorText: 'Something went wrong'));
+    }
+    setState(() {
+      _loading = false;
+    });
   }
 }

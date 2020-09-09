@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:vitapp/Screens/AddNotices.dart';
 import 'package:vitapp/Screens/TimeLine.dart';
 import 'package:vitapp/Widgets/Animation.dart';
 import 'package:vitapp/Widgets/header.dart';
 import 'package:vitapp/constants.dart';
+
+final postRef = FirebaseFirestore.instance.collection('posts');
+final StorageReference storageRef = FirebaseStorage.instance.ref();
 
 class HomeScreen extends StatefulWidget {
   @override
