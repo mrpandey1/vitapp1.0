@@ -114,18 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         getTile(Icons.filter_frames, 'Notice',
             function: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddNotice()),
-                  )
+                  setState(() {
+                    initWidget = firstWidget();
+                  }),
+                  Navigator.pop(context),
                 }),
         Divider(),
         getTile(Icons.library_books, 'Notes',
             function: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddNotes()),
-                  )
+                  setState(() {
+                    initWidget = secondWidget();
+                  }),
+                  Navigator.pop(context),
                 }),
         Divider(),
         getTile(Icons.exit_to_app, 'Sign Out', function: () async {
