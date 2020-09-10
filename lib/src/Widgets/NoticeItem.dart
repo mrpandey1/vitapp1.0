@@ -153,22 +153,25 @@ Widget buildPostImage(DocumentSnapshot documentSnapshot) {
     padding: EdgeInsets.all(8.0),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(5.0),
-      child: Center(
-        child: CachedNetworkImage(
-          height: documentSnapshot.data()['type'] == 'pdf' ? 120.0 : null,
-          imageUrl: documentSnapshot.data()['type'] == 'image'
-              ? documentSnapshot.data()['mediaUrl']
-              : kPdfImage,
-          placeholder: (context, url) {
-            return Container(
-              height: 200.0,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              ),
-            );
-          },
-          fit: BoxFit.cover,
+      child: Container(
+        height: 200,
+        child: Center(
+          child: CachedNetworkImage(
+            height: documentSnapshot.data()['type'] == 'pdf' ? 120.0 : null,
+            imageUrl: documentSnapshot.data()['type'] == 'image'
+                ? documentSnapshot.data()['mediaUrl']
+                : kPdfImage,
+            placeholder: (context, url) {
+              return Container(
+                height: 200.0,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.3),
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+              );
+            },
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     ),

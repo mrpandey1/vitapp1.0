@@ -4,9 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:vitapp/src/Screens/AddNotes.dart';
 import 'package:vitapp/src/Screens/AddNotices.dart';
+import 'package:vitapp/src/Screens/NotesSection.dart';
 import 'TimeLine.dart';
 import 'Authenticator.dart';
-import 'package:vitapp/src//Widgets/Animation.dart';
 import 'package:vitapp/src//Widgets/header.dart';
 import 'package:vitapp/src/constants.dart';
 
@@ -22,15 +22,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Widget firstWidget() {
+    return TimeLine();
+  }
+
+  Widget secondWidget() {
+    return NotesSection();
+  }
+
+  Widget initWidget;
+  @override
+  void initState() {
+    super.initState();
+    initWidget = firstWidget();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: header(context, isAppTitle: true, isCenterTitle: true),
-      body: TimeLine(),
+      body: initWidget,
       drawer: Drawer(
           child: FirebaseAuth.instance.currentUser != null
               ? buildAdminSideBar()
               : buildStudentSideBar()),
+      floatingActionButton: FirebaseAuth.instance.currentUser != null
+          ? FloatingActionButton(
+              onPressed: () {},
+              child: Icon(Icons.add),
+              backgroundColor: kPrimaryColor,
+            )
+          : null,
     );
   }
 
@@ -50,9 +72,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         getTile(Icons.filter_frames, 'Notice',
-            function: () => {Navigator.pop(context)}),
+            function: () => {
+                  setState(() {
+                    initWidget = firstWidget();
+                  }),
+                  Navigator.pop(context),
+                }),
         Divider(),
-        getTile(Icons.library_books, 'Notes'),
+        getTile(Icons.library_books, 'Notes',
+            function: () => {
+                  setState(() {
+                    initWidget = secondWidget();
+                  }),
+                  Navigator.pop(context),
+                }),
         Divider(),
         getTile(Icons.account_circle, 'Admin Login', function: () {
           Navigator.push(context,
@@ -78,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: kPrimaryColor,
           ),
         ),
-        getTile(Icons.filter_frames, 'Add Notice',
+        getTile(Icons.filter_frames, 'Notice',
             function: () => {
                   Navigator.push(
                     context,
@@ -86,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 }),
         Divider(),
-        getTile(Icons.library_books, 'Add Notes',
+        getTile(Icons.library_books, 'Notes',
             function: () => {
                   Navigator.push(
                     context,
