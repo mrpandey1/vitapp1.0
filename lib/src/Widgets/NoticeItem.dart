@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vitapp/src/Screens/HomeScreen.dart';
+import 'package:vitapp/src/Widgets/DetailScreen.dart';
 
 import '../constants.dart';
 
@@ -11,30 +12,43 @@ Widget buildNoticeItem(
     BuildContext context, DocumentSnapshot documentSnapshot) {
   return Padding(
     padding: EdgeInsets.all(8.0),
-    child: Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5.0),
-          border: Border.all(
-            color: kPrimaryColor.withOpacity(0.6),
-            width: 0.7,
-          )),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildPostHeader(documentSnapshot, context),
-          Divider(
-            color: Colors.grey.withOpacity(0.5),
-            height: 0.5,
-          ),
-          documentSnapshot.data()['mediaUrl'].isNotEmpty
-              ? buildPostImage(documentSnapshot)
-              : Container(
-                  height: 0,
-                  width: 0,
-                ),
-          buildNotice(documentSnapshot),
-        ],
+    child: GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DetailScreen(
+                    mediaUrl: documentSnapshot.data()['mediaUrl'],
+                    from: documentSnapshot.data()['from'],
+                    notice: documentSnapshot.data()['notice'],
+                  )),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5.0),
+            border: Border.all(
+              color: kPrimaryColor.withOpacity(0.6),
+              width: 0.7,
+            )),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildPostHeader(documentSnapshot, context),
+            Divider(
+              color: Colors.grey.withOpacity(0.5),
+              height: 0.5,
+            ),
+            documentSnapshot.data()['mediaUrl'].isNotEmpty
+                ? buildPostImage(documentSnapshot)
+                : Container(
+                    height: 0,
+                    width: 0,
+                  ),
+            buildNotice(documentSnapshot),
+          ],
+        ),
       ),
     ),
   );

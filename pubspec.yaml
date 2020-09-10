@@ -45,6 +45,7 @@ dependencies:
   timeago:
   url_launcher: ^5.5.2
   advance_pdf_viewer: ^1.2.0
+  photo_view: 
 
 dev_dependencies:
   flutter_test:
