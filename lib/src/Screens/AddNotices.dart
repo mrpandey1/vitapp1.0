@@ -404,7 +404,7 @@ class _AddNoticeState extends State<AddNotice> {
 
     if (type == 'pdf') {
       StorageReference storageReference =
-          storageRef.child('Notices').child('$fileName${DateTime.now()}');
+          storageRef.child('Notices').child(postId);
 
       final StorageUploadTask uploadTask = storageReference.putFile(pdfFile);
       final StorageTaskSnapshot storageTaskSnapshot =
@@ -434,6 +434,7 @@ class _AddNoticeState extends State<AddNotice> {
         'mediaUrl': mediaUrl,
         'notice': notice,
         'type': type,
+        'fileName': fileName,
         'timestamp': DateTime.now()
       };
       await timelineRef
