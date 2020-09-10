@@ -60,6 +60,17 @@ class _AddNoticeState extends State<AddNotice> {
                           ),
                         ),
                       ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only(left: 30.0),
+                        child: Text(
+                          'Adding Image is Optional',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      ),
                       SizedBox(height: 30.0),
                       GestureDetector(
                         onTap: () => {selectImage(context)},
