@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:vitapp/src/Widgets/NoticeItem.dart';
-import 'package:vitapp/src/Widgets/TimelineLoadingPlaceholder.dart';
-import 'HomeScreen.dart';
+import 'package:vitapp/src/Screens/DepartmentNotes.dart';
+import 'package:vitapp/src/Screens/HomeScreen.dart';
+import 'package:vitapp/src/Widgets/header.dart';
+import 'package:vitapp/src/Widgets/loading.dart';
+
+import '../constants.dart';
+
+List<DocumentSnapshot> _list;
+String yearValue;
 
 class NotesSection extends StatefulWidget {
   @override
@@ -11,46 +16,87 @@ class NotesSection extends StatefulWidget {
 }
 
 class _NotesSectionState extends State<NotesSection> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return buildTimeline();
+    return Scaffold(body: adminScreen());
   }
 
-  Widget buildTimeline() {
-    List<DocumentSnapshot> _list;
-    return StreamBuilder(
-        stream: timelineRef
-            .doc('all')
-            .collection('timelinePost')
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshots) {
-          if (!snapshots.hasData) {
-            return ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return LoadingContainer();
-                });
+  Widget adminScreen() {
+    return Scaffold(
+      key: _scaffoldKey,
+      body: StreamBuilder(
+        stream: departmentRef.snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return loadingScreen();
           }
-          _list = snapshots.data.docs;
-          return _list.length == 0
-              ? Center(
-                  child: Text('No Notice For Now!'),
-                )
-              : ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: _list.length,
-                  itemBuilder: (context, index) {
-                    return buildNoticeItem(context, _list[index]);
-                  },
-                );
-        });
+          _list = snapshot.data.docs;
+          List<Padding> _listTiles = [];
+          _list.forEach(
+            (DocumentSnapshot documentSnapshot) {
+              _listTiles.add(
+                Padding(
+                  padding: EdgeInsets.all(15.0),
+                  child: GestureDetector(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DepartmentNotes(dept: documentSnapshot.id)),
+                      ),
+                    },
+                    child: Container(
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                              border: Border.all(
+                                color: kPrimaryColor.withOpacity(0.6),
+                                width: 0.7,
+                              ),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xff9921E8).withOpacity(0.9),
+                                  kPrimaryColor
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${documentSnapshot.id}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+
+          return GridView.count(
+            crossAxisCount: 2,
+            children: _listTiles,
+            physics: BouncingScrollPhysics(),
+          );
+        },
+      ),
+    );
   }
 }

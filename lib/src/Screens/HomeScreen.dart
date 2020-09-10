@@ -15,6 +15,7 @@ final timelineRef = FirebaseFirestore.instance.collection('timeline');
 final StorageReference storageRef = FirebaseStorage.instance.ref();
 final notesRef = FirebaseFirestore.instance.collection('notes');
 final subjectsRef = FirebaseFirestore.instance.collection('subjects');
+final departmentRef = FirebaseFirestore.instance.collection('departments');
 
 class HomeScreen extends StatefulWidget {
   @override
