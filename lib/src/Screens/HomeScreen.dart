@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FirebaseAuth.instance.currentUser != null
           ? BoomMenu(
               animatedIcon: AnimatedIcons.menu_close,
-              child: Icon(Icons.add),
+              child: Text('+'),
               backgroundColor: kPrimaryColor,
               animatedIconTheme: IconThemeData(size: 22.0),
               overlayColor: Colors.black,

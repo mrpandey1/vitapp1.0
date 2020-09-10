@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,7 +9,6 @@ import 'package:path/path.dart' as path;
 import 'package:vitapp/src/Widgets/header.dart';
 import 'package:vitapp/src/Widgets/loading.dart';
 import 'HomeScreen.dart';
-
 import '../constants.dart';
 
 class AddNotes extends StatefulWidget {
@@ -184,6 +182,7 @@ class _AddNotesState extends State<AddNotes> {
                       ),
               ],
             ),
+            showCircularProgress(_loading),
           ],
         ),
       ),

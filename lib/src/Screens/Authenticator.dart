@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
-import 'AddNotices.dart';
 import 'SignInSignUpPage.dart';
 
 class Authenticator extends StatefulWidget {
