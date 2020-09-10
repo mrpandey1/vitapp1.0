@@ -1,10 +1,13 @@
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
 import 'package:vitapp/src/Widgets/DetailScreen.dart';
+import 'package:vitapp/src/Screens/PDFViewer.dart';
 
 import '../constants.dart';
 
@@ -14,15 +17,19 @@ Widget buildNoticeItem(
     padding: EdgeInsets.all(8.0),
     child: GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DetailScreen(
-                    mediaUrl: documentSnapshot.data()['mediaUrl'],
-                    from: documentSnapshot.data()['from'],
-                    notice: documentSnapshot.data()['notice'],
-                  )),
-        );
+        if (documentSnapshot.data()['type'] == 'pdf') {
+          openPdf(context, documentSnapshot);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailScreen(
+                      mediaUrl: documentSnapshot.data()['mediaUrl'],
+                      from: documentSnapshot.data()['from'],
+                      notice: documentSnapshot.data()['notice'],
+                    )),
+          );
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -40,13 +47,11 @@ Widget buildNoticeItem(
               color: Colors.grey.withOpacity(0.5),
               height: 0.5,
             ),
-            documentSnapshot.data()['mediaUrl'].isNotEmpty
-                ? buildPostImage(documentSnapshot)
-                : Container(
-                    height: 0,
-                    width: 0,
-                  ),
+            buildPostImage(documentSnapshot),
             buildNotice(documentSnapshot),
+            documentSnapshot.data()['type'] == 'pdf'
+                ? buildPDFFooter(documentSnapshot)
+                : Container(),
           ],
         ),
       ),
@@ -112,8 +117,12 @@ deletePost(BuildContext context, String postId,
       doc.reference.delete();
     }
   });
-  if (documentSnapshot.data()['mediaUrl'] != '') {
-    storageRef.child('posts').child('post_$postId.jpg').delete();
+  if (documentSnapshot.data()['type'] == 'image') {
+    if (documentSnapshot.data()['mediaUrl'] != '') {
+      storageRef.child('posts').child('post_$postId.jpg').delete();
+    }
+  } else {
+    storageRef.child('Notices').child(postId).delete();
   }
   Navigator.pop(context);
 }
@@ -141,34 +150,89 @@ handleDeletePost(BuildContext parentContext, String postId,
 
 Widget buildPostImage(DocumentSnapshot documentSnapshot) {
   return Padding(
-    padding: EdgeInsets.all(5.0),
+    padding: EdgeInsets.all(8.0),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(5.0),
-      child: CachedNetworkImage(
-        imageUrl: documentSnapshot.data()['mediaUrl'],
-        placeholder: (context, url) {
-          return Container(
-            height: 200.0,
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.3),
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            ),
-          );
-        },
-        fit: BoxFit.cover,
+      child: Center(
+        child: CachedNetworkImage(
+          height: documentSnapshot.data()['type'] == 'pdf' ? 120.0 : null,
+          imageUrl: documentSnapshot.data()['type'] == 'image'
+              ? documentSnapshot.data()['mediaUrl']
+              : kPdfImage,
+          placeholder: (context, url) {
+            return Container(
+              height: 200.0,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.3),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+            );
+          },
+          fit: BoxFit.cover,
+        ),
       ),
     ),
   );
 }
 
 Widget buildNotice(DocumentSnapshot documentSnapshot) {
-  return Container(
-    padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15.0, right: 15.0),
-    child: Text(
-      documentSnapshot.data()['notice'],
-      style: TextStyle(
-        fontSize: 16.0,
+  return documentSnapshot.data()['notice'].toString().length == 0
+      ? Container()
+      : Container(
+          padding:
+              EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15.0, right: 15.0),
+          child: Text(
+            documentSnapshot.data()['notice'],
+            style: TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
+        );
+}
+
+Widget buildPDFFooter(DocumentSnapshot documentSnapshot) {
+  return Column(
+    children: [
+      Divider(),
+      ListTile(
+        title: Text(
+          documentSnapshot.data()['fileName'],
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        trailing: IconButton(
+          onPressed: () => {downloadPdf(documentSnapshot)},
+          icon: Icon(
+            Icons.file_download,
+            color: kPrimaryColor,
+          ),
+        ),
+      )
+    ],
+  );
+}
+
+openPdf(BuildContext context, DocumentSnapshot documentSnapshot) async {
+  PDFDocument doc =
+      await PDFDocument.fromURL(documentSnapshot.data()['mediaUrl']);
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PdfViewer(
+        document: doc,
       ),
     ),
   );
+}
+
+downloadPdf(DocumentSnapshot documentSnapshot) async {
+  String url = documentSnapshot.data()['mediaUrl'];
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
 }
