@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:vitapp/src/Widgets/NoticeItem.dart';
+import 'package:vitapp/src/Widgets/TimelineLoadingPlaceholder.dart';
 import 'HomeScreen.dart';
 
 class TimeLine extends StatefulWidget {
@@ -33,7 +34,7 @@ class _TimeLineState extends State<TimeLine> {
             return ListView.builder(
                 itemCount: 10,
                 itemBuilder: (context, index) {
-                  return Text('hey');
+                  return LoadingContainer();
                 });
           }
           _list = snapshots.data.docs;
