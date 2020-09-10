@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_boom_menu/flutter_boom_menu.dart';
 import 'package:vitapp/src/Screens/AddNotes.dart';
 import 'package:vitapp/src/Screens/AddNotices.dart';
 import 'package:vitapp/src/Screens/NotesSection.dart';
@@ -43,31 +44,93 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: header(context, isAppTitle: true, isCenterTitle: true),
       body: initWidget,
-      drawer: Drawer(
-          child: FirebaseAuth.instance.currentUser != null
-              ? buildAdminSideBar()
-              : buildStudentSideBar()),
+      drawer: Drawer(child: buildSideBar()),
       floatingActionButton: FirebaseAuth.instance.currentUser != null
-          ? FloatingActionButton(
-              onPressed: () {},
+          ? BoomMenu(
+              animatedIcon: AnimatedIcons.menu_close,
               child: Icon(Icons.add),
               backgroundColor: kPrimaryColor,
+              animatedIconTheme: IconThemeData(size: 22.0),
+              overlayColor: Colors.black,
+              overlayOpacity: 0.7,
+              children: [
+                MenuItem(
+                  child: Icon(
+                    Icons.filter_frames,
+                    color: Colors.white,
+                  ),
+                  title: 'Notice',
+                  subtitle: 'Add Notice',
+                  titleColor: Colors.white,
+                  subTitleColor: Colors.white,
+                  backgroundColor: Color(0xff0984e3),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddNotice()),
+                  ),
+                ),
+                MenuItem(
+                  child: Icon(
+                    Icons.library_books,
+                    color: Colors.white,
+                  ),
+                  title: 'Notes',
+                  titleColor: Colors.white,
+                  subtitle: 'Add Notes',
+                  subTitleColor: Colors.white,
+                  backgroundColor: Color(0xffe84393),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddNotes()),
+                  ),
+                ),
+              ],
             )
           : null,
     );
   }
 
-  ListView buildStudentSideBar() {
+  ListView buildSideBar() {
     return ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
         DrawerHeader(
           child: Center(
-            child: Text(
-              'Student Header',
-              style: TextStyle(color: Colors.white, fontSize: 20.0),
-            ),
-          ),
+              child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(50.0),
+                child: Image.asset(
+                  'assets/images/profile.jpg',
+                  height: 100.0,
+                ),
+              ),
+              SizedBox(height: 12.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    FirebaseAuth.instance.currentUser != null
+                        ? 'Admin'
+                        : 'Student',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  FirebaseAuth.instance.currentUser != null
+                      ? Row(
+                          children: [
+                            SizedBox(width: 5.0),
+                            Icon(Icons.stars, color: Colors.white),
+                          ],
+                        )
+                      : Container()
+                ],
+              ),
+            ],
+          )),
           decoration: BoxDecoration(
             color: kPrimaryColor,
           ),
@@ -88,52 +151,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context),
                 }),
         Divider(),
-        getTile(Icons.account_circle, 'Admin Login', function: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Authenticator()));
-        }),
+        FirebaseAuth.instance.currentUser != null
+            ? getTile(Icons.exit_to_app, 'Sign Out', function: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pop(context);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              })
+            : getTile(Icons.account_circle, 'Admin Login', function: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Authenticator()));
+              }),
         Divider(),
-      ],
-    );
-  }
-
-  ListView buildAdminSideBar() {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        DrawerHeader(
-          child: Center(
-            child: Text(
-              'Admin Header',
-              style: TextStyle(color: Colors.white, fontSize: 20.0),
-            ),
-          ),
-          decoration: BoxDecoration(
-            color: kPrimaryColor,
-          ),
-        ),
-        getTile(Icons.filter_frames, 'Notice',
-            function: () => {
-                  setState(() {
-                    initWidget = firstWidget();
-                  }),
-                  Navigator.pop(context),
-                }),
-        Divider(),
-        getTile(Icons.library_books, 'Notes',
-            function: () => {
-                  setState(() {
-                    initWidget = secondWidget();
-                  }),
-                  Navigator.pop(context),
-                }),
-        Divider(),
-        getTile(Icons.exit_to_app, 'Sign Out', function: () async {
-          await FirebaseAuth.instance.signOut();
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomeScreen()));
-        }),
       ],
     );
   }

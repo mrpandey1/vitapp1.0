@@ -154,10 +154,9 @@ Widget buildPostImage(DocumentSnapshot documentSnapshot) {
     child: ClipRRect(
       borderRadius: BorderRadius.circular(5.0),
       child: Container(
-        height: 200,
         child: Center(
           child: CachedNetworkImage(
-            height: documentSnapshot.data()['type'] == 'pdf' ? 120.0 : null,
+            height: documentSnapshot.data()['type'] == 'pdf' ? 110.0 : null,
             imageUrl: documentSnapshot.data()['type'] == 'image'
                 ? documentSnapshot.data()['mediaUrl']
                 : kPdfImage,
