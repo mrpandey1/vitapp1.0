@@ -17,19 +17,17 @@ Widget buildNoticeItem(
     padding: EdgeInsets.all(8.0),
     child: GestureDetector(
       onTap: () {
-        if (documentSnapshot.data()['type'] == 'pdf') {
-          openPdf(context, documentSnapshot);
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DetailScreen(
-                      mediaUrl: documentSnapshot.data()['mediaUrl'],
-                      from: documentSnapshot.data()['from'],
-                      notice: documentSnapshot.data()['notice'],
-                    )),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DetailScreen(
+                  mediaUrl: documentSnapshot.data()['mediaUrl'].toString(),
+                  from: documentSnapshot.data()['from'],
+                  notice: documentSnapshot.data()['notice'],
+                  timestamp: documentSnapshot.data()['timestamp'].toDate(),
+                  documentSnapshot: documentSnapshot,
+                  type: documentSnapshot.data()['type'])),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -50,7 +48,7 @@ Widget buildNoticeItem(
             buildPostImage(documentSnapshot),
             buildNotice(documentSnapshot),
             documentSnapshot.data()['type'] == 'pdf'
-                ? buildPDFFooter(documentSnapshot)
+                ? buildPDFFooter(context, documentSnapshot)
                 : Container(),
           ],
         ),
@@ -151,10 +149,10 @@ handleDeletePost(BuildContext parentContext, String postId,
 Widget buildPostImage(DocumentSnapshot documentSnapshot) {
   return Padding(
     padding: EdgeInsets.all(8.0),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(5.0),
-      child: Container(
-        child: Center(
+    child: Container(
+      child: Center(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
           child: CachedNetworkImage(
             height: documentSnapshot.data()['type'] == 'pdf' ? 110.0 : 250.0,
             imageUrl: documentSnapshot.data()['type'] == 'image'
@@ -188,55 +186,51 @@ Widget buildNotice(DocumentSnapshot documentSnapshot) {
             notice,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 16.0,
+              fontSize: 15.0,
             ),
           ),
         );
 }
 
-Widget buildPDFFooter(DocumentSnapshot documentSnapshot) {
+Widget buildPDFFooter(BuildContext context, DocumentSnapshot documentSnapshot) {
   return Column(
     children: [
       Divider(),
-      ListTile(
-        title: Text(
-          documentSnapshot.data()['fileName'],
-          style: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.bold,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 15.0),
+            child: Text(
+              documentSnapshot.data()['fileName'],
+              style: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        ),
-        trailing: IconButton(
-          onPressed: () => {downloadPdf(documentSnapshot)},
-          icon: Icon(
-            Icons.file_download,
-            color: kPrimaryColor,
-          ),
-        ),
-      )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: () => {openPdf(context, documentSnapshot)},
+                icon: Icon(
+                  Icons.remove_red_eye,
+                  color: kPrimaryColor,
+                ),
+              ),
+              IconButton(
+                onPressed: () => {downloadPdf(documentSnapshot)},
+                icon: Icon(
+                  Icons.file_download,
+                  color: kPrimaryColor,
+                ),
+              ),
+              SizedBox(width: 12.0),
+            ],
+          )
+        ],
+      ),
     ],
   );
-}
-
-openPdf(BuildContext context, DocumentSnapshot documentSnapshot) async {
-  PDFDocument doc =
-      await PDFDocument.fromURL(documentSnapshot.data()['mediaUrl']);
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => PdfViewer(
-        document: doc,
-      ),
-    ),
-  );
-}
-
-downloadPdf(DocumentSnapshot documentSnapshot) async {
-  String url = documentSnapshot.data()['mediaUrl'];
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
-  }
 }
