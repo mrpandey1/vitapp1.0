@@ -36,6 +36,7 @@ class _AddNoticeState extends State<AddNotice> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
       appBar: header(
         context,

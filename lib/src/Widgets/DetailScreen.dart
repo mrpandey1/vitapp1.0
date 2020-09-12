@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class DetailScreen extends StatefulWidget {
@@ -20,8 +22,27 @@ class _DetailScreenState extends State<DetailScreen> {
       appBar: AppBar(
         title: Text(widget.from),
       ),
-      body: Column(
-        children: [buildImage(widget.mediaUrl), Text('hey')],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [buildImage(widget.mediaUrl), showText(widget.notice)],
+        ),
+      ),
+    );
+  }
+
+  Widget showText(notice) {
+    Future<void> _onOpen(LinkableElement link) async {
+      if (await canLaunch(link.url)) {
+        await launch(link.url);
+      } else {
+        throw 'Could not launch $link';
+      }
+    }
+
+    return Center(
+      child: Linkify(
+        onOpen: _onOpen,
+        text: notice,
       ),
     );
   }
