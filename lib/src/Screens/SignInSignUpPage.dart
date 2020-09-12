@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:vitapp/src/Screens/Authenticator.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
-import 'AddNotices.dart';
 import 'package:vitapp/src/Widgets/SnackBar.dart';
 import 'package:vitapp/src/Widgets/header.dart';
 import 'package:vitapp/src/constants.dart';
@@ -58,11 +58,9 @@ class _SignInSignUpPageState extends State<SignInSignUpPage> {
                 email: emailController.text.trim(),
                 password: passwordController.text.trim())
             .then((value) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(),
-              ));
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+              (Route<dynamic> route) => false);
         }).catchError((e) {
           _scaffoldKey.currentState.showSnackBar(snackBar(context,
               isErrorSnackbar: true, errorText: 'Invalid credentials'));
