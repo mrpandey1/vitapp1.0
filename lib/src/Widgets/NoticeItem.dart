@@ -178,13 +178,14 @@ Widget buildPostImage(DocumentSnapshot documentSnapshot) {
 }
 
 Widget buildNotice(DocumentSnapshot documentSnapshot) {
+  String notice = documentSnapshot.data()['notice'];
   return documentSnapshot.data()['notice'].toString().length == 0
       ? Container()
       : Container(
           padding:
               EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15.0, right: 15.0),
           child: Text(
-            documentSnapshot.data()['notice'],
+            notice,
             style: TextStyle(
               fontSize: 16.0,
             ),

@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:vitapp/src/Widgets/header.dart';
+import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class DetailScreen extends StatefulWidget {
   final String mediaUrl, from, notice;
@@ -10,22 +12,54 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  double _scale = 1.0;
+  double _previousScale = 1.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: header(context, isAppTitle: false, titleText: widget.from),
-        body: buildImage(widget.mediaUrl));
+      appBar: AppBar(
+        title: Text(widget.from),
+      ),
+      body: Column(
+        children: [buildImage(widget.mediaUrl), Text('hey')],
+      ),
+    );
   }
 
   Widget buildImage(image) {
-    return Container(
-      color: Colors.white,
-      child: PhotoView(
-        backgroundDecoration: BoxDecoration(color: Colors.white),
-        imageProvider: NetworkImage(image),
-        minScale: PhotoViewComputedScale.contained * 0.8,
-        maxScale: 4.0,
+    return PinchZoomImage(
+      image: CachedNetworkImage(
+        imageUrl: image,
+      ),
+      zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+      hideStatusBarWhileZooming: true,
+    );
+  }
+
+  Widget buildImage2(image) {
+    return GestureDetector(
+      onScaleStart: (ScaleStartDetails details) {
+        _previousScale = _scale;
+        setState(() {});
+      },
+      onScaleUpdate: (ScaleUpdateDetails details) {
+        _scale = _previousScale * details.scale;
+        setState(() {});
+      },
+      onScaleEnd: (ScaleEndDetails details) {
+        _previousScale = 1.0;
+        setState(() {});
+      },
+      child: RotatedBox(
+        quarterTurns: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Transform(
+            alignment: FractionalOffset.center,
+            transform: Matrix4.diagonal3(Vector3(_scale, _scale, _scale)),
+            child: CachedNetworkImage(imageUrl: image),
+          ),
+        ),
       ),
     );
   }

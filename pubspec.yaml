@@ -47,7 +47,7 @@ dependencies:
   advance_pdf_viewer: ^1.2.0
   photo_view:
   flutter_boom_menu: ^1.0.2
-
+  pinch_zoom_image_last: ^0.3.1
 
 dev_dependencies:
   flutter_test:
