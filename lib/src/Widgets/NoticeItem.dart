@@ -156,7 +156,7 @@ Widget buildPostImage(DocumentSnapshot documentSnapshot) {
       child: Container(
         child: Center(
           child: CachedNetworkImage(
-            height: documentSnapshot.data()['type'] == 'pdf' ? 110.0 : null,
+            height: documentSnapshot.data()['type'] == 'pdf' ? 110.0 : 250.0,
             imageUrl: documentSnapshot.data()['type'] == 'image'
                 ? documentSnapshot.data()['mediaUrl']
                 : kPdfImage,
