@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
 import 'package:vitapp/src/Widgets/DetailScreen.dart';
 import 'package:vitapp/src/Screens/PDFViewer.dart';
+import 'package:vitapp/src/Widgets/PDFDetails.dart';
 
 import '../constants.dart';
 
@@ -18,7 +19,17 @@ Widget buildNoticeItem(
     child: GestureDetector(
       onTap: () {
         if (documentSnapshot.data()['type'] == 'pdf') {
-          openPdf(context, documentSnapshot);
+          // openPdf(context, documentSnapshot);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PDFDetailScreen(
+                      mediaUrl: documentSnapshot.data()['mediaUrl'],
+                      from: documentSnapshot.data()['from'],
+                      notice: documentSnapshot.data()['notice'],
+                      filename: documentSnapshot.data()['fileName'],
+                    )),
+          );
         } else {
           Navigator.push(
             context,

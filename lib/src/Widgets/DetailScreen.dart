@@ -4,6 +4,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
+import 'package:vitapp/src/constants.dart';
 
 class DetailScreen extends StatefulWidget {
   final String mediaUrl, from, notice;
@@ -38,48 +39,42 @@ class _DetailScreenState extends State<DetailScreen> {
       }
     }
 
-    return Center(
-      child: Linkify(
-        onOpen: _onOpen,
-        text: notice,
-      ),
-    );
+    return notice.toString().trim() != ''
+        ? Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Linkify(
+                      style: TextStyle(fontSize: 18),
+                      onOpen: _onOpen,
+                      text: notice,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : Container(
+            height: 0,
+          );
   }
 
   Widget buildImage(image) {
-    return PinchZoomImage(
-      image: CachedNetworkImage(
-        imageUrl: image,
-      ),
-      zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-      hideStatusBarWhileZooming: true,
-    );
-  }
-
-  Widget buildImage2(image) {
-    return GestureDetector(
-      onScaleStart: (ScaleStartDetails details) {
-        _previousScale = _scale;
-        setState(() {});
-      },
-      onScaleUpdate: (ScaleUpdateDetails details) {
-        _scale = _previousScale * details.scale;
-        setState(() {});
-      },
-      onScaleEnd: (ScaleEndDetails details) {
-        _previousScale = 1.0;
-        setState(() {});
-      },
-      child: RotatedBox(
-        quarterTurns: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Transform(
-            alignment: FractionalOffset.center,
-            transform: Matrix4.diagonal3(Vector3(_scale, _scale, _scale)),
-            child: CachedNetworkImage(imageUrl: image),
-          ),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: PinchZoomImage(
+        image: CachedNetworkImage(
+          imageUrl: image,
         ),
+        zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+        hideStatusBarWhileZooming: true,
       ),
     );
   }
