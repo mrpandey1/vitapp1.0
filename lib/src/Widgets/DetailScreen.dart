@@ -1,7 +1,13 @@
+import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:share/share.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +29,7 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  String _localfile;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +79,12 @@ class _DetailScreenState extends State<DetailScreen> {
                   widget.type == 'pdf' ? buildPDFFooter(context) : Container(),
                 ],
               ),
+            ),
+            _downloadPost(widget.mediaUrl),
+            FlatButton(
+              child: Text('share'),
+              onPressed: () =>
+                  _onShare(context, widget.mediaUrl, widget.notice),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -157,6 +170,56 @@ class _DetailScreenState extends State<DetailScreen> {
         ),
         Divider(),
       ],
+    );
+  }
+
+  static Future<bool> _checkAndGetPermission() async {
+    final PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+    if (permission != PermissionStatus.granted) {
+      final Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler()
+              .requestPermissions(<PermissionGroup>[PermissionGroup.storage]);
+      if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
+        return null;
+      }
+    }
+    return true;
+  }
+
+  _onShare(BuildContext context, imagePaths, subject) async {
+    final RenderBox box = context.findRenderObject();
+    await Share.shareFiles(imagePaths,
+        subject: subject,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+  }
+
+  Widget _downloadPost(values) {
+    return FlatButton(
+      onPressed: () async {
+        if (await _checkAndGetPermission() != null) {
+          final DateTime now = DateTime.now();
+          final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
+          final String formatted = formatter.format(now);
+          Dio dio = Dio();
+          String appdirectory = '/storage/emulated/0/Download/';
+          final Directory directory =
+              await Directory(appdirectory + '/VITAPP').create(recursive: true);
+          String dir = directory.path;
+          final String localfile = '$dir/img-' + formatted + '.jpg';
+          try {
+            await dio.download(values, localfile).then((value) => {});
+            setState(() {
+              _localfile = localfile;
+            });
+          } on PlatformException catch (e) {
+            print(e);
+          }
+          print(localfile);
+          Navigator.pop(context);
+        }
+      },
+      child: Text('Download Image'),
     );
   }
 }
