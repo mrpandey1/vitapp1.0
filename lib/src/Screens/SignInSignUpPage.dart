@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:vitapp/src/Screens/Authenticator.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
 import 'package:vitapp/src/Widgets/SnackBar.dart';
 import 'package:vitapp/src/Widgets/header.dart';
@@ -176,10 +175,6 @@ class _SignInSignUpPageState extends State<SignInSignUpPage> {
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
       ),
     );
-  }
-
-  Widget _showErrorMessage(String error) {
-    return snackBar(context, isErrorSnackbar: true, errorText: error);
   }
 
   Widget _showAsQuestion() {

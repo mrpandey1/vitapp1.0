@@ -5,7 +5,6 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vector_math/vector_math_64.dart' show Vector3;
 import 'package:vitapp/src/constants.dart';
 
 class DetailScreen extends StatefulWidget {

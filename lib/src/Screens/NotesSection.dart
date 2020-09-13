@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:vitapp/src/Screens/DepartmentNotes.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
-import 'package:vitapp/src/Widgets/header.dart';
 import 'package:vitapp/src/Widgets/loading.dart';
 
 import '../constants.dart';

@@ -1,15 +1,10 @@
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vector_math/vector_math_64.dart' show Vector3;
 import 'package:vitapp/src/Screens/PDFViewer.dart';
 import 'package:vitapp/src/constants.dart';
-
-import 'BuildNotesItem.dart';
 
 class PDFDetailScreen extends StatefulWidget {
   final String mediaUrl, from, notice, filename;
@@ -19,8 +14,6 @@ class PDFDetailScreen extends StatefulWidget {
 }
 
 class _PDFDetailScreenState extends State<PDFDetailScreen> {
-  double _scale = 1.0;
-  double _previousScale = 1.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
