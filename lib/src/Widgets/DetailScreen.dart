@@ -78,7 +78,6 @@ class _DetailScreenState extends State<DetailScreen> {
         throw 'Could not launch $link';
       }
     }
-
     return Padding(
       padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: Material(
@@ -141,6 +140,8 @@ class _DetailScreenState extends State<DetailScreen> {
             child: CachedNetworkImage(imageUrl: image),
           ),
         ),
+        zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+        hideStatusBarWhileZooming: true,
       ),
     );
   }

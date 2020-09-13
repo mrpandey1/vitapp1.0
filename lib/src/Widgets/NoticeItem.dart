@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
 import 'package:vitapp/src/Widgets/DetailScreen.dart';
 import 'package:vitapp/src/Screens/PDFViewer.dart';
+import 'package:vitapp/src/Widgets/PDFDetails.dart';
 
 import '../constants.dart';
 
