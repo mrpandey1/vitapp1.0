@@ -1,14 +1,10 @@
-import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/Screens/HomeScreen.dart';
 import 'package:vitapp/src/Widgets/DetailScreen.dart';
-import 'package:vitapp/src/Screens/PDFViewer.dart';
-import 'package:vitapp/src/Widgets/PDFDetails.dart';
 
 import '../constants.dart';
 

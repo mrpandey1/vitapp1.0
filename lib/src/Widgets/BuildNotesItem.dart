@@ -1,5 +1,6 @@
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
@@ -53,13 +54,15 @@ Widget buildNotesHeader(
         ),
       ],
     ),
-    trailing: IconButton(
-      onPressed: () => {handleDeleteNotes(context, documentSnapshot)},
-      icon: Icon(
-        Icons.more_vert,
-        color: kPrimaryColor,
-      ),
-    ),
+    trailing: FirebaseAuth.instance.currentUser != null
+        ? IconButton(
+            onPressed: () => {handleDeleteNotes(context, documentSnapshot)},
+            icon: Icon(
+              Icons.more_vert,
+              color: kPrimaryColor,
+            ),
+          )
+        : null,
   );
 }
 

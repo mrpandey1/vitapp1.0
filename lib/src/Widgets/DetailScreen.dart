@@ -24,8 +24,6 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  double _scale = 1.0;
-  double _previousScale = 1.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,21 +49,38 @@ class _DetailScreenState extends State<DetailScreen> {
           ],
         ),
       ),
-      body: ListView(
-        physics: BouncingScrollPhysics(),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
-            child: buildImage(
-                widget.type == 'image' ? widget.mediaUrl : kPdfImage),
-          ),
-          widget.type == 'pdf' ? buildPDFFooter(context) : Container(),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
-            child: showText(widget.notice),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
+          physics: BouncingScrollPhysics(),
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5.0),
+                  border: Border.all(
+                    color: kPrimaryColor.withOpacity(0.6),
+                    width: 0.7,
+                  )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: buildImage(
+                        widget.type == 'image' ? widget.mediaUrl : kPdfImage),
+                  ),
+                  widget.type == 'pdf' ? buildPDFFooter(context) : Container(),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 5.0, bottom: 5.0, left: 15.0, right: 15.0),
+              child: showText(widget.notice),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -78,6 +93,7 @@ class _DetailScreenState extends State<DetailScreen> {
         throw 'Could not launch $link';
       }
     }
+
     return Padding(
       padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: Material(
@@ -116,64 +132,32 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Widget buildImage2(image) {
-    return GestureDetector(
-      onScaleStart: (ScaleStartDetails details) {
-        _previousScale = _scale;
-        setState(() {});
-      },
-      onScaleUpdate: (ScaleUpdateDetails details) {
-        _scale = _previousScale * details.scale;
-        setState(() {});
-      },
-      onScaleEnd: (ScaleEndDetails details) {
-        _previousScale = 1.0;
-        setState(() {});
-      },
-      child: RotatedBox(
-        quarterTurns: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Transform(
-            alignment: FractionalOffset.center,
-            transform: Matrix4.diagonal3(Vector3(_scale, _scale, _scale)),
-            child: CachedNetworkImage(imageUrl: image),
-          ),
-        ),
-        zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-        hideStatusBarWhileZooming: true,
-      ),
-    );
-  }
-
   Widget buildPDFFooter(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: Column(
-        children: [
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                onPressed: () => {openPdf(context, widget.documentSnapshot)},
-                icon: Icon(
-                  Icons.remove_red_eye,
-                  color: kPrimaryColor,
-                ),
+    return Column(
+      children: [
+        Divider(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(widget.documentSnapshot.data()['fileName']),
+            IconButton(
+              onPressed: () => {openPdf(context, widget.documentSnapshot)},
+              icon: Icon(
+                Icons.remove_red_eye,
+                color: kPrimaryColor,
               ),
-              IconButton(
-                onPressed: () => {downloadPdf(widget.documentSnapshot)},
-                icon: Icon(
-                  Icons.file_download,
-                  color: kPrimaryColor,
-                ),
+            ),
+            IconButton(
+              onPressed: () => {downloadPdf(widget.documentSnapshot)},
+              icon: Icon(
+                Icons.file_download,
+                color: kPrimaryColor,
               ),
-            ],
-          ),
-          Divider(),
-        ],
-      ),
+            ),
+          ],
+        ),
+        Divider(),
+      ],
     );
   }
 }
