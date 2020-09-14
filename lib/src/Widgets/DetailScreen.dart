@@ -188,28 +188,9 @@ class _DetailScreenState extends State<DetailScreen> {
     return true;
   }
 
-  // _onShare(BuildContext context, imagePaths, subject) async {
   Future<Null> _onShare() async {
-    final RenderBox box = context.findRenderObject();
-    if (Platform.isAndroid) {
-      var url = 'https://i.ytimg.com/vi/fq4N0hgOWzU/maxresdefault.jpg';
-      var response = await get(url);
-      String documentDirectory = '/storage/emulated/0/Download';
-      File imgFile = new File('$documentDirectory/VITAPP/flutter.png');
-      imgFile.writeAsBytesSync(response.bodyBytes);
-      print('hey');
-      Share.shareFiles(
-          [File('$documentDirectory/VITAPP/flutter.png').toString()],
-          subject: 'URL File Share',
-          text: 'Hello, check your share files!',
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    } else {
-      Share.share('Hello, check your share files!',
-          subject: 'URL File Share',
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    }
+    //share goes here
   }
-  // }
 
   Widget _downloadPost(values) {
     return FlatButton(
