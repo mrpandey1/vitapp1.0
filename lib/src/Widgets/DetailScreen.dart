@@ -209,10 +209,10 @@ class _DetailScreenState extends State<DetailScreen> {
     String name;
     if (widget.type == 'image') {
       value = 'image/jpg';
-      name = 'abc.jpg';
+      name = '${widget.documentSnapshot.data()['fileName']}.jpg';
     } else if (widget.type == 'pdf') {
       value = 'application/pdf';
-      name = 'abc.pdf';
+      name = '${widget.documentSnapshot.data()['fileName']}.pdf';
     }
     await Share.file('gaurang', name, bytes, value, text: widget.notice);
   }
