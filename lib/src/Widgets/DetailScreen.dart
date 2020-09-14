@@ -6,12 +6,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/constants.dart';
+import 'package:http/http.dart';
 
 class DetailScreen extends StatefulWidget {
   final String mediaUrl, from, notice, type;
@@ -83,8 +85,7 @@ class _DetailScreenState extends State<DetailScreen> {
             _downloadPost(widget.mediaUrl),
             FlatButton(
               child: Text('share'),
-              onPressed: () =>
-                  _onShare(context, widget.mediaUrl, widget.notice),
+              onPressed: () => _onShare(),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -187,39 +188,58 @@ class _DetailScreenState extends State<DetailScreen> {
     return true;
   }
 
-  _onShare(BuildContext context, imagePaths, subject) async {
+  // _onShare(BuildContext context, imagePaths, subject) async {
+  Future<Null> _onShare() async {
     final RenderBox box = context.findRenderObject();
-    await Share.shareFiles(imagePaths,
-        subject: subject,
-        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    if (Platform.isAndroid) {
+      var url = 'https://i.ytimg.com/vi/fq4N0hgOWzU/maxresdefault.jpg';
+      var response = await get(url);
+      String documentDirectory = '/storage/emulated/0/Download';
+      File imgFile = new File('$documentDirectory/VITAPP/flutter.png');
+      imgFile.writeAsBytesSync(response.bodyBytes);
+      print('hey');
+      Share.shareFiles(
+          [File('$documentDirectory/VITAPP/flutter.png').toString()],
+          subject: 'URL File Share',
+          text: 'Hello, check your share files!',
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    } else {
+      Share.share('Hello, check your share files!',
+          subject: 'URL File Share',
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    }
   }
+  // }
 
   Widget _downloadPost(values) {
     return FlatButton(
       onPressed: () async {
-        if (await _checkAndGetPermission() != null) {
-          final DateTime now = DateTime.now();
-          final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
-          final String formatted = formatter.format(now);
-          Dio dio = Dio();
-          String appdirectory = '/storage/emulated/0/Download/';
-          final Directory directory =
-              await Directory(appdirectory + '/VITAPP').create(recursive: true);
-          String dir = directory.path;
-          final String localfile = '$dir/img-' + formatted + '.jpg';
-          try {
-            await dio.download(values, localfile).then((value) => {});
-            setState(() {
-              _localfile = localfile;
-            });
-          } on PlatformException catch (e) {
-            print(e);
-          }
-          print(localfile);
-          Navigator.pop(context);
-        }
+        downloadPost(values);
       },
       child: Text('Download Image'),
     );
+  }
+
+  downloadPost(values) async {
+    if (await _checkAndGetPermission() != null) {
+      final DateTime now = DateTime.now();
+      final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
+      final String formatted = formatter.format(now);
+      Dio dio = Dio();
+      String appdirectory = '/storage/emulated/0/Download/';
+      final Directory directory =
+          await Directory(appdirectory + '/VITAPP').create(recursive: true);
+      String dir = directory.path;
+      final String localfile = '$dir/img-' + formatted + '.jpg';
+      try {
+        await dio.download(values, localfile).then((value) => {});
+        setState(() {
+          _localfile = localfile;
+        });
+      } on PlatformException catch (e) {
+        print(e);
+      }
+      return _localfile;
+    }
   }
 }
