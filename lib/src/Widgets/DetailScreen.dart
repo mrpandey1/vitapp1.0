@@ -1,19 +1,21 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/constants.dart';
 import 'package:http/http.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 class DetailScreen extends StatefulWidget {
   final String mediaUrl, from, notice, type;
@@ -32,6 +34,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   String _localfile;
+  Uint8List bytes;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,7 +192,29 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<Null> _onShare() async {
-    //share goes here
+    try {
+      var request = await HttpClient().getUrl(Uri.parse(widget.mediaUrl));
+      var response = await request.close();
+      bytes = await consolidateHttpClientResponseBytes(response);
+      if (bytes.length != null) {
+        data1(bytes);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  data1(bytes) async {
+    String value;
+    String name;
+    if (widget.type == 'image') {
+      value = 'image/jpg';
+      name = 'abc.jpg';
+    } else if (widget.type == 'pdf') {
+      value = 'application/pdf';
+      name = 'abc.pdf';
+    }
+    await Share.file('gaurang', name, bytes, value, text: widget.notice);
   }
 
   Widget _downloadPost(values) {
@@ -203,24 +228,50 @@ class _DetailScreenState extends State<DetailScreen> {
 
   downloadPost(values) async {
     if (await _checkAndGetPermission() != null) {
+      // final DateTime now = DateTime.now();
+      // final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
+      // final String formatted = formatter.format(now);
+      // Dio dio = Dio();
+      // String appdirectory = '/storage/emulated/0/Download/';
+      // final Directory directory =
+      //     await Directory(appdirectory + '/VITAPP').create(recursive: true);
+      // String dir = directory.path;
+      // final String localfile = '$dir/img-' + formatted + '.jpg';
+      // try {
+      //   await dio.download(values, localfile).then((value) => {});
+      //   setState(() {
+      //     _localfile = localfile;
+      //   });
+      // } on PlatformException catch (e) {
+      //   print(e);
+      // }
+      // return _localfile;
+
+      final Directory appdirectory = await getExternalStorageDirectory();
+      final Directory directory = await Directory(appdirectory.path + '/VITAPP')
+          .create(recursive: true);
+      final String dir = directory.path;
+      final String url = values;
       final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
       final String formatted = formatter.format(now);
-      Dio dio = Dio();
-      String appdirectory = '/storage/emulated/0/Download/';
-      final Directory directory =
-          await Directory(appdirectory + '/VITAPP').create(recursive: true);
-      String dir = directory.path;
-      final String localfile = '$dir/img-' + formatted + '.jpg';
+      final String localfile = 'img-' + formatted + '.jpg';
+
       try {
-        await dio.download(values, localfile).then((value) => {});
-        setState(() {
-          _localfile = localfile;
-        });
+        print("in download");
+        final taskId = await FlutterDownloader.enqueue(
+          url: url,
+          savedDir: dir,
+          fileName: localfile,
+          showNotification:
+              true, // show download progress in status bar (for Android)
+          openFileFromNotification:
+              true, // click on notification to open downloaded file (for Android)
+        );
       } on PlatformException catch (e) {
         print(e);
       }
-      return _localfile;
+      return "success";
     }
   }
 }
