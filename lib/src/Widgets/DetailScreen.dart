@@ -248,7 +248,8 @@ class _DetailScreenState extends State<DetailScreen> {
       value = 'application/pdf';
       name = '${widget.documentSnapshot.data()['fileName']}.pdf';
     }
-    await Share.file('gaurang', name, bytes, value, text: widget.notice);
+    await Share.file('Notice by ${widget.from}', name, bytes, value,
+        text: widget.notice);
   }
 
   Widget _downloadPost(values) {
