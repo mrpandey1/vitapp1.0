@@ -146,25 +146,28 @@ handleDeletePost(BuildContext parentContext, String postId,
 Widget buildPostImage(DocumentSnapshot documentSnapshot) {
   return Padding(
     padding: EdgeInsets.all(8.0),
-    child: Container(
-      child: Center(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(5.0),
-          child: CachedNetworkImage(
-            height: documentSnapshot.data()['type'] == 'pdf' ? 110.0 : 250.0,
-            imageUrl: documentSnapshot.data()['type'] == 'image'
-                ? documentSnapshot.data()['mediaUrl']
-                : kPdfImage,
-            placeholder: (context, url) {
-              return Container(
-                height: 200.0,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.3),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-              );
-            },
-            fit: BoxFit.cover,
+    child: Hero(
+      tag: documentSnapshot.id,
+      child: Container(
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: CachedNetworkImage(
+              height: documentSnapshot.data()['type'] == 'pdf' ? 110.0 : 250.0,
+              imageUrl: documentSnapshot.data()['type'] == 'image'
+                  ? documentSnapshot.data()['mediaUrl']
+                  : kPdfImage,
+              placeholder: (context, url) {
+                return Container(
+                  height: 200.0,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                );
+              },
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
