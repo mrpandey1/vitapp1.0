@@ -173,8 +173,10 @@ class _DetailScreenState extends State<DetailScreen> {
           children: [
             Container(
               padding: EdgeInsets.only(left: 15.0),
+              width: MediaQuery.of(context).size.width * 0.5,
               child: Text(
                 widget.documentSnapshot.data()['fileName'],
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),

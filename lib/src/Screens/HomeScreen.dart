@@ -69,21 +69,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => AddNotice()),
                   ),
                 ),
-                MenuItem(
-                  child: Icon(
-                    Icons.library_books,
-                    color: Colors.white,
-                  ),
-                  title: 'Notes',
-                  titleColor: Colors.white,
-                  subtitle: 'Add Notes',
-                  subTitleColor: Colors.white,
-                  backgroundColor: Color(0xffe84393),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddNotes()),
-                  ),
-                ),
+                // MenuItem(
+                //   child: Icon(
+                //     Icons.library_books,
+                //     color: Colors.white,
+                //   ),
+                //   title: 'Notes',
+                //   titleColor: Colors.white,
+                //   subtitle: 'Add Notes',
+                //   subTitleColor: Colors.white,
+                //   backgroundColor: Color(0xffe84393),
+                //   onTap: () => Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => AddNotes()),
+                //   ),
+                // ),
               ],
             )
           : null,
@@ -142,14 +142,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
                   Navigator.pop(context),
                 }),
-        Divider(),
-        getTile(Icons.library_books, 'Notes',
-            function: () => {
-                  setState(() {
-                    initWidget = secondWidget();
-                  }),
-                  Navigator.pop(context),
-                }),
+        // Divider(),
+        // getTile(Icons.library_books, 'Notes',
+        //     function: () => {
+        //           setState(() {
+        //             initWidget = secondWidget();
+        //           }),
+        //           Navigator.pop(context),
+        //         }),
         Divider(),
         FirebaseAuth.instance.currentUser != null
             ? getTile(Icons.exit_to_app, 'Sign Out', function: () async {

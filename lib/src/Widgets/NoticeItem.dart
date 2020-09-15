@@ -201,11 +201,15 @@ Widget buildPDFFooter(BuildContext context, DocumentSnapshot documentSnapshot) {
         children: [
           Container(
             padding: EdgeInsets.only(left: 15.0),
-            child: Text(
-              documentSnapshot.data()['fileName'],
-              style: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: Text(
+                documentSnapshot.data()['fileName'],
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
