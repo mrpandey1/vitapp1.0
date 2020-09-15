@@ -181,6 +181,13 @@ class _DetailScreenState extends State<DetailScreen> {
                 color: kPrimaryColor,
               ),
             ),
+            IconButton(
+              onPressed: () => _onShare(),
+              icon: Icon(
+                Icons.share,
+                color: kPrimaryColor,
+              ),
+            )
           ],
         ),
         Divider(),
