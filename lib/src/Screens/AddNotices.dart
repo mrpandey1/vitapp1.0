@@ -50,7 +50,7 @@ class _AddNoticeState extends State<AddNotice> {
           Stack(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height,
+                // height: MediaQuery.of(context).size.height,
                 alignment: Alignment.center,
                 color: _loading
                     ? Colors.black12.withOpacity(0.1)
