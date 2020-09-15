@@ -14,7 +14,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vitapp/src/constants.dart';
-import 'package:http/http.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -33,7 +32,6 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  String _localfile;
   Uint8List bytes;
   @override
   Widget build(BuildContext context) {
@@ -81,14 +79,11 @@ class _DetailScreenState extends State<DetailScreen> {
                     child: buildImage(
                         widget.type == 'image' ? widget.mediaUrl : kPdfImage),
                   ),
-                  widget.type == 'pdf' ? buildPDFFooter(context) : Container(),
+                  widget.type == 'pdf'
+                      ? buildPDFFooter(context)
+                      : buildNoticeFooter(context, widget.mediaUrl),
                 ],
               ),
-            ),
-            _downloadPost(widget.mediaUrl),
-            FlatButton(
-              child: Text('share'),
-              onPressed: () => _onShare(),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -98,6 +93,22 @@ class _DetailScreenState extends State<DetailScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildNoticeFooter(BuildContext context, values) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        IconButton(
+          icon: Icon(Icons.file_download),
+          onPressed: () => downloadPost(values),
+        ),
+        IconButton(
+          icon: Icon(Icons.share),
+          onPressed: () => _onShare(),
+        ),
+      ],
     );
   }
 
@@ -228,25 +239,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
   downloadPost(values) async {
     if (await _checkAndGetPermission() != null) {
-      // final DateTime now = DateTime.now();
-      // final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
-      // final String formatted = formatter.format(now);
-      // Dio dio = Dio();
-      // String appdirectory = '/storage/emulated/0/Download/';
-      // final Directory directory =
-      //     await Directory(appdirectory + '/VITAPP').create(recursive: true);
-      // String dir = directory.path;
-      // final String localfile = '$dir/img-' + formatted + '.jpg';
-      // try {
-      //   await dio.download(values, localfile).then((value) => {});
-      //   setState(() {
-      //     _localfile = localfile;
-      //   });
-      // } on PlatformException catch (e) {
-      //   print(e);
-      // }
-      // return _localfile;
-
       final Directory appdirectory = await getExternalStorageDirectory();
       final Directory directory = await Directory(appdirectory.path + '/VITAPP')
           .create(recursive: true);
@@ -258,7 +250,6 @@ class _DetailScreenState extends State<DetailScreen> {
       final String localfile = 'img-' + formatted + '.jpg';
 
       try {
-        print("in download");
         final taskId = await FlutterDownloader.enqueue(
           url: url,
           savedDir: dir,
