@@ -74,6 +74,7 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  widget.type == 'pdf' ? buildPDFHeader(context) : Container(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: buildImage(
@@ -164,45 +165,49 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  Widget buildPDFHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 15.0),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text(
+            widget.documentSnapshot.data()['fileName'],
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildPDFFooter(BuildContext context) {
     return Column(
       children: [
         Divider(),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              padding: EdgeInsets.only(left: 15.0),
-              child: Text(
-                widget.documentSnapshot.data()['fileName'],
-                style: TextStyle(fontWeight: FontWeight.bold),
+            IconButton(
+              onPressed: () => {openPdf(context, widget.documentSnapshot)},
+              icon: Icon(
+                Icons.remove_red_eye,
+                color: kPrimaryColor,
               ),
             ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => {openPdf(context, widget.documentSnapshot)},
-                  icon: Icon(
-                    Icons.remove_red_eye,
-                    color: kPrimaryColor,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => {downloadPdf(widget.documentSnapshot)},
-                  icon: Icon(
-                    Icons.file_download,
-                    color: kPrimaryColor,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => _onShare(),
-                  icon: Icon(
-                    Icons.share,
-                    color: kPrimaryColor,
-                  ),
-                ),
-                SizedBox(width: 15.0),
-              ],
+            IconButton(
+              onPressed: () => {downloadPdf(widget.documentSnapshot)},
+              icon: Icon(
+                Icons.file_download,
+                color: kPrimaryColor,
+              ),
+            ),
+            IconButton(
+              onPressed: () => _onShare(),
+              icon: Icon(
+                Icons.share,
+                color: kPrimaryColor,
+              ),
             ),
           ],
         ),
