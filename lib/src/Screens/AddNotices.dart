@@ -60,14 +60,17 @@ class _AddNoticeState extends State<AddNotice> {
                     Padding(
                       padding: const EdgeInsets.only(
                           top: 20.0, left: 15.0, right: 15.0),
-                      child: TextFormField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        controller: _noticeController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Add Notice Here....',
-                          labelText: 'Notice',
+                      child: Container(
+                        height: 200.0,
+                        child: TextFormField(
+                          maxLines: 1000,
+                          keyboardType: TextInputType.multiline,
+                          controller: _noticeController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Add Notice Here....',
+                            labelText: 'Notice',
+                          ),
                         ),
                       ),
                     ),
@@ -83,7 +86,7 @@ class _AddNoticeState extends State<AddNotice> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30.0),
+                    SizedBox(height: 20.0),
                     GestureDetector(
                       onTap: () => {handleSelectNotice(context)},
                       child: Container(
@@ -141,7 +144,7 @@ class _AddNoticeState extends State<AddNotice> {
                           )
                         : Container(),
                     SizedBox(
-                      height: 40.0,
+                      height: 30.0,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -159,7 +162,7 @@ class _AddNoticeState extends State<AddNotice> {
                       ),
                     ),
                     SizedBox(
-                      height: 25.0,
+                      height: 20.0,
                     ),
                     Container(
                       height: 50.0,
