@@ -239,16 +239,15 @@ class _DetailScreenState extends State<DetailScreen> {
 
   downloadPost(values) async {
     if (await _checkAndGetPermission() != null) {
-      final Directory appdirectory = await getExternalStorageDirectory();
-      final Directory directory = await Directory(appdirectory.path + '/VITAPP')
-          .create(recursive: true);
-      final String dir = directory.path;
-      final String url = values;
       final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
       final String formatted = formatter.format(now);
+      String appdirectory = '/storage/emulated/0/Download/';
+      final Directory directory =
+          await Directory(appdirectory + '/VITAPP').create(recursive: true);
+      String dir = directory.path;
       final String localfile = 'img-' + formatted + '.jpg';
-
+      final String url = values;
       try {
         final taskId = await FlutterDownloader.enqueue(
           url: url,
